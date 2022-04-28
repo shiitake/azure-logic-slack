@@ -21,10 +21,10 @@ Make sure you're logged in first:
 
 Run the following commands in PowerShell:
 
-`> $deploymentName = "slack-logic-app"`
-`> $resourceGroup = "rk-myresource"`
-`> $templateFile = "logic-slacknotification.json"`
-`> $templateParams = "logic-slacknotification.parameters.json"`
+`> $deploymentName = "slack-logic-app"`  
+`> $resourceGroup = "rk-myresource"`  
+`> $templateFile = "logic-slacknotification.json"`  
+`> $templateParams = "logic-slacknotification.parameters.json"`  
 
 ```
 > New-AzResourceGroupDeployment `
