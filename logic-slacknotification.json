@@ -1,0 +1,579 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_logic_slack_name": {
+            "defaultValue": "logic-slacknotification",
+            "type": "string"
+        },
+        "slack_webhook_url": {
+            "defaultValue": "https://hooks.slack.com/services/",
+            "type": "string",
+            "metadata": {
+                "description": "The webhook that is used to connnect to your Slack app."
+            }
+        },
+        "resource_group_name": {
+            "type": "string",
+            "defaultValue": "rg-logic-slacknotification"
+        },
+        "resource_location": {
+            "type": "string",
+            "defaultValue": "East US"
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-07-01",
+            "dependsOn": [],
+            "location": "[parameters('resource_location')]",
+            "name": "[parameters('workflows_logic_slack_name')]",
+            "properties": {
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "slack_webhook_url": {
+                            "defaultValue": "[parameters('slack_webhook_url')]",
+                            "type": "String"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "alertContext": {
+                                                    "properties": {},
+                                                    "type": "object"
+                                                },
+                                                "essentials": {
+                                                    "properties": {
+                                                        "alertContextVersion": {
+                                                            "type": "string"
+                                                        },
+                                                        "alertId": {
+                                                            "type": "string"
+                                                        },
+                                                        "alertRule": {
+                                                            "type": "string"
+                                                        },
+                                                        "alertTargetIDs": {
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": "array"
+                                                        },
+                                                        "description": {
+                                                            "type": "string"
+                                                        },
+                                                        "essentialsVersion": {
+                                                            "type": "string"
+                                                        },
+                                                        "firedDateTime": {
+                                                            "type": "string"
+                                                        },
+                                                        "monitorCondition": {
+                                                            "type": "string"
+                                                        },
+                                                        "monitoringService": {
+                                                            "type": "string"
+                                                        },
+                                                        "originAlertId": {
+                                                            "type": "string"
+                                                        },
+                                                        "resolvedDateTime": {
+                                                            "type": "string"
+                                                        },
+                                                        "severity": {
+                                                            "type": "string"
+                                                        },
+                                                        "signalType": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "schemaId": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Parse_JSON": {
+                            "runAfter": {},
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@triggerBody()",
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "alertContext": {
+                                                    "properties": {},
+                                                    "type": "object"
+                                                },
+                                                "essentials": {
+                                                    "properties": {
+                                                        "alertContextVersion": {
+                                                            "type": "string"
+                                                        },
+                                                        "alertId": {
+                                                            "type": "string"
+                                                        },
+                                                        "alertRule": {
+                                                            "type": "string"
+                                                        },
+                                                        "alertTargetIDs": {
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": "array"
+                                                        },
+                                                        "configurationItems": {
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": "array"
+                                                        },
+                                                        "description": {
+                                                            "type": "string"
+                                                        },
+                                                        "essentialsVersion": {
+                                                            "type": "string"
+                                                        },
+                                                        "firedDateTime": {
+                                                            "type": "string"
+                                                        },
+                                                        "monitorCondition": {
+                                                            "type": "string"
+                                                        },
+                                                        "monitoringService": {
+                                                            "type": "string"
+                                                        },
+                                                        "originAlertId": {
+                                                            "type": "string"
+                                                        },
+                                                        "resolvedDateTime": {
+                                                            "type": "string"
+                                                        },
+                                                        "severity": {
+                                                            "type": "string"
+                                                        },
+                                                        "signalType": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "schemaId": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "Switch": {
+                            "runAfter": {
+                                "Parse_JSON": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "cases": {
+                                "Platform": {
+                                    "case": "Platform",
+                                    "actions": {
+                                        "HTTP_2": {
+                                            "runAfter": {
+                                                "allOf": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "Http",
+                                            "inputs": {
+                                                "body": {
+                                                    "blocks": [
+                                                        {
+                                                            "text": {
+                                                                "text": "Azure Performance Alert: @{triggerBody()?['data']?['essentials']?['alertRule']}",
+                                                                "type": "plain_text"
+                                                            },
+                                                            "type": "header"
+                                                        },
+                                                        {
+                                                            "fields": [
+                                                                {
+                                                                    "text": "*Resource:*\n@{last(split(first(triggerBody()?['data']?['essentials']?['alertTargetIDs']), '/'))}",
+                                                                    "type": "mrkdwn"
+                                                                },
+                                                                {
+                                                                    "text": "*Status:*\n@{body('Parse_JSON')?['data']?['essentials']?['monitorCondition']}",
+                                                                    "type": "mrkdwn"
+                                                                },
+                                                                {
+                                                                    "text": "*Severity:*\n@{body('Parse_JSON')?['data']?['essentials']?['severity']}",
+                                                                    "type": "mrkdwn"
+                                                                },
+                                                                {
+                                                                    "text": "*Azure Alert:*\n@{outputs('allOf')?['metricName']}",
+                                                                    "type": "mrkdwn"
+                                                                },
+                                                                {
+                                                                    "text": "*Condition:*\n @{outputs('allOf')?['timeAggregation']} @{outputs('allOf')?['operator']} @{outputs('allOf')?['threshold']}",
+                                                                    "type": "mrkdwn"
+                                                                },
+                                                                {
+                                                                    "text": "*Value:*\n@{outputs('allOf')?['metricValue']}",
+                                                                    "type": "mrkdwn"
+                                                                }
+                                                            ],
+                                                            "type": "section"
+                                                        },
+                                                        {
+                                                            "text": {
+                                                                "text": "*<@{concat('https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AlertDetailsTemplateBlade/alertId/',replace(body('Parse_JSON')['data']['essentials']['alertId'],'/','%2F'))}|View Alert in Azure Portal>*",
+                                                                "type": "mrkdwn"
+                                                            },
+                                                            "type": "section"
+                                                        },
+                                                        {
+                                                            "text": {
+                                                                "text": "<!here>",
+                                                                "type": "mrkdwn"
+                                                            },
+                                                            "type": "section"
+                                                        }
+                                                    ]
+                                                },
+                                                "headers": {
+                                                    "Content-Type": "application/json"
+                                                },
+                                                "method": "POST",
+                                                "uri": "@parameters('slack_webhook_url')"
+                                            }
+                                        },
+                                        "Parse_alertContext": {
+                                            "runAfter": {},
+                                            "type": "ParseJson",
+                                            "inputs": {
+                                                "content": "@body('Parse_JSON')?['data']?['alertContext']",
+                                                "schema": {
+                                                    "properties": {
+                                                        "alertContext": {
+                                                            "properties": {
+                                                                "condition": {
+                                                                    "properties": {
+                                                                        "allOf": {
+                                                                            "items": {
+                                                                                "properties": {
+                                                                                    "dimensions": {
+                                                                                        "items": {
+                                                                                            "properties": {
+                                                                                                "name": {
+                                                                                                    "type": "string"
+                                                                                                },
+                                                                                                "value": {
+                                                                                                    "type": "string"
+                                                                                                }
+                                                                                            },
+                                                                                            "required": [
+                                                                                                "name",
+                                                                                                "value"
+                                                                                            ],
+                                                                                            "type": "object"
+                                                                                        },
+                                                                                        "type": "array"
+                                                                                    },
+                                                                                    "metricName": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "metricNamespace": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "metricValue": {
+                                                                                        "type": "number"
+                                                                                    },
+                                                                                    "operator": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "threshold": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "timeAggregation": {
+                                                                                        "type": "string"
+                                                                                    }
+                                                                                },
+                                                                                "required": [
+                                                                                    "metricName",
+                                                                                    "metricNamespace",
+                                                                                    "operator",
+                                                                                    "threshold",
+                                                                                    "timeAggregation",
+                                                                                    "dimensions",
+                                                                                    "metricValue"
+                                                                                ],
+                                                                                "type": "object"
+                                                                            }
+                                                                        },
+                                                                        "windowEndTime": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "windowSize": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "windowStartTime": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "conditionType": {
+                                                                    "type": "string"
+                                                                },
+                                                                "properties": {}
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        },
+                                        "allOf": {
+                                            "runAfter": {
+                                                "Parse_alertContext": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "Compose",
+                                            "inputs": "@first(triggerBody()?['data']?['alertContext']?['condition']?['allOf'])"
+                                        }
+                                    }
+                                },
+                                "SmartDetector": {
+                                    "case": "SmartDetector",
+                                    "actions": {
+                                        "Build_Slack_Message": {
+                                            "runAfter": {
+                                                "Parse_alertContext-SmartAlert": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "Compose",
+                                            "inputs": {
+                                                "blocks": [
+                                                    {
+                                                        "text": {
+                                                            "text": "Azure Smart Alert: @{body('Parse_alertContext-SmartAlert')?['alertContext']?['SmartDetectorName']}",
+                                                            "type": "plain_text"
+                                                        },
+                                                        "type": "header"
+                                                    },
+                                                    {
+                                                        "fields": [
+                                                            {
+                                                                "text": "*Resource:*\n@{last(split(first(triggerBody()?['data']?['essentials']?['alertTargetIDs']), '/'))}",
+                                                                "type": "mrkdwn"
+                                                            },
+                                                            {
+                                                                "text": "*Status:*\n@{triggerBody()?['data']?['essentials']?['monitorCondition']}",
+                                                                "type": "mrkdwn"
+                                                            },
+                                                            {
+                                                                "text": "*Severity:*\n@{body('Parse_JSON')?['data']?['essentials']?['severity']}",
+                                                                "type": "mrkdwn"
+                                                            },
+                                                            {
+                                                                "text": "*Summary:*\n@{body('Parse_alertContext-SmartAlert')?['alertContext']?['DetectionSummary']}",
+                                                                "type": "mrkdwn"
+                                                            },
+                                                            {
+                                                                "text": "*Detected Value:*\n @{body('Parse_alertContext-SmartAlert')?['alertContext']?['DetectedValue']} ",
+                                                                "type": "mrkdwn"
+                                                            },
+                                                            {
+                                                                "text": "*Normal Value:*\n@{body('Parse_alertContext-SmartAlert')?['alertContext']?['NormalValue']}",
+                                                                "type": "mrkdwn"
+                                                            }
+                                                        ],
+                                                        "type": "section"
+                                                    },
+                                                    {
+                                                        "text": {
+                                                            "text": "*<@{concat('https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AlertDetailsTemplateBlade/alertId/',replace(body('Parse_JSON')['data']['essentials']['alertId'],'/','%2F'))}|View Alert in Azure Portal>*",
+                                                            "type": "mrkdwn"
+                                                        },
+                                                        "type": "section"
+                                                    },
+                                                    {
+                                                        "text": {
+                                                            "text": "<!here>",
+                                                            "type": "mrkdwn"
+                                                        },
+                                                        "type": "section"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        "HTTP": {
+                                            "runAfter": {
+                                                "Build_Slack_Message": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "Http",
+                                            "inputs": {
+                                                "body": "@outputs('Build_Slack_Message')",
+                                                "method": "POST",
+                                                "uri": "@parameters('slack_webhook_url')"
+                                            }
+                                        },
+                                        "Parse_alertContext-SmartAlert": {
+                                            "runAfter": {},
+                                            "type": "ParseJson",
+                                            "inputs": {
+                                                "content": "@body('Parse_JSON')?['data']?['alertContext']",
+                                                "schema": {
+                                                    "properties": {
+                                                        "alertContext": {
+                                                            "properties": {
+                                                                "AnalysisTimestamp": {
+                                                                    "type": "string"
+                                                                },
+                                                                "DetectedValue": {
+                                                                    "type": "string"
+                                                                },
+                                                                "DetectionSummary": {
+                                                                    "type": "string"
+                                                                },
+                                                                "FormattedOccurrenceTime": {
+                                                                    "type": "string"
+                                                                },
+                                                                "NormalValue": {
+                                                                    "type": "string"
+                                                                },
+                                                                "PresentationInsightEventRequest": {
+                                                                    "type": "string"
+                                                                },
+                                                                "SmartDetectorId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "SmartDetectorName": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "default": {
+                                "actions": {
+                                    "Build_Default_Slack_Message": {
+                                        "runAfter": {},
+                                        "type": "Compose",
+                                        "inputs": {
+                                            "blocks": [
+                                                {
+                                                    "text": {
+                                                        "text": "Azure Alert:@{body('Parse_JSON')?['data']?['essentials']?['alertRule']} ",
+                                                        "type": "plain_text"
+                                                    },
+                                                    "type": "header"
+                                                },
+                                                {
+                                                    "fields": [
+                                                        {
+                                                            "text": "*Resource:*\n@{last(split(first(triggerBody()?['data']?['essentials']?['alertTargetIDs']), '/'))}",
+                                                            "type": "mrkdwn"
+                                                        },
+                                                        {
+                                                            "text": "*Status:*\n@{triggerBody()?['data']?['essentials']?['monitorCondition']}",
+                                                            "type": "mrkdwn"
+                                                        },
+                                                        {
+                                                            "text": "*Severity:*\n@{body('Parse_JSON')?['data']?['essentials']?['severity']}",
+                                                            "type": "mrkdwn"
+                                                        },
+                                                        {
+                                                            "text": "*Description:*\n@{if(not(equals(string(triggerBody()?['data']?['description']),'')),triggerBody()?['data']?['description'],'N/A')}",
+                                                            "type": "mrkdwn"
+                                                        }
+                                                    ],
+                                                    "type": "section"
+                                                },
+                                                {
+                                                    "text": {
+                                                        "text": "*<@{concat('https://portal.azure.com/#blade/Microsoft_Azure_Monitoring/AlertDetailsTemplateBlade/alertId/',replace(body('Parse_JSON')['data']['essentials']['alertId'],'/','%2F'))}|View Alert in Azure Portal>*",
+                                                        "type": "mrkdwn"
+                                                    },
+                                                    "type": "section"
+                                                },
+                                                {
+                                                    "text": {
+                                                        "text": "<!here>",
+                                                        "type": "mrkdwn"
+                                                    },
+                                                    "type": "section"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "HTTP_3": {
+                                        "runAfter": {
+                                            "Build_Default_Slack_Message": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "Http",
+                                        "inputs": {
+                                            "body": "@outputs('Build_Default_Slack_Message')",
+                                            "headers": {
+                                                "Content-Type": "application/json"
+                                            },
+                                            "method": "POST",
+                                            "uri": "@parameters('slack_webhook_url')"
+                                        }
+                                    }
+                                }
+                            },
+                            "expression": "@body('Parse_JSON')?['data']?['essentials']?['monitoringService']",
+                            "type": "Switch"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "slack_webhook_url": {
+                        "value": "[parameters('slack_webhook_url')]"
+                    }
+                },
+                "state": "Enabled"
+            },
+            "scale": null,
+            "tags": {},
+            "type": "Microsoft.Logic/workflows"
+        }
+    ],
+    "variables": {}
+}

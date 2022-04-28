@@ -1,6 +1,6 @@
 # Azure Logic Slack
 
-This is a logic app that you can use to parse Azure Monitor alerts that are using common alert schema and forward them to a Slack application. 
+This is an Azure logic app that you can use to parse Azure Monitor alerts that are using common alert schema and forward them to a Slack application. 
 
 At this point it only handles `Platform` and `Smart Detector` (aka Smart Alert) but it can be extended fairly easily. 
 
@@ -23,7 +23,7 @@ Run the following commands in PowerShell:
 
 `> $deploymentName = "slack-logic-app"`
 `> $resourceGroup = "rk-myresource"`
-`> $templateFile = "logic-slacknotification.definition.json"`
+`> $templateFile = "logic-slacknotification.json"`
 `> $templateParams = "logic-slacknotification.parameters.json"`
 
 ```
